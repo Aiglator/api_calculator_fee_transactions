@@ -8,10 +8,18 @@
     <h1>Calculateur de Frais de Transaction Bitcoin</h1>
 
     <form method="post">
-        <label for="amount">Montant à envoyer (en satoshis):</label><br>
-        <input type="number" id="amount" name="amount" required><br><br>
-        <input type="submit" value="Calculer les Frais">
-    </form>
+    <label for="amount">Montant à envoyer (en satoshis):</label><br>
+    <input type="number" id="amount" name="amount" required><br><br>
+
+    <label for="speed">Vitesse de confirmation:</label><br>
+    <select name="speed" id="speed" required>
+        <option value="rapide">Rapide</option>
+        <option value="moyen">Moyen</option>
+        <option value="lent">Lent</option>
+    </select><br><br>
+
+    <input type="submit" value="Calculer les Frais">
+</form>
 
     <?php
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -20,9 +28,12 @@
     
         // Récupérer le montant du formulaire
         $amount = $_POST['amount'];
+        $speed = $_POST['speed'];
     
         // Données pour la requête POST
-        $data = ['amount' => $amount];
+        $data = ['amount' => $amount
+            , 'speed' => $speed
+        ];
     
         // Setup cURL session
         $ch = curl_init();
