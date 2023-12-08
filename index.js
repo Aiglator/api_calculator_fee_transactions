@@ -47,8 +47,7 @@ app.post('/calculate_fee', async (req, res) => {
    } catch (error) {
        res.status(500).send({ error: error.message });
    }
-   app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
 });
-
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
