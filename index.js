@@ -15,18 +15,24 @@ app.post('/calculate_fee', async (req, res) => {
         }
 
         // Obtenir les frais recommandés de Mempool.space
-        const response = await axios.get('https://mempool.space/api/v1/fees/recommended');
-        const fees = response.data;
+        const feesResponse = await axios.get('https://mempool.space/api/v1/fees/recommended');
+        const fees = feesResponse.data;
+
+        // Obtenir le taux de change BTC/USD de CoinGecko
+        const btcToUsdResponse = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
+        const btcToUsd = btcToUsdResponse.data.bitcoin.usd;
 
         // Calcul des frais (exemple: en utilisant le tarif le plus rapide)
         const feePerByte = fees.fastestFee;
-        const estimatedSize = 250; // Taille estimée d'une transaction en bytes (valeur moyenne)
+        const estimatedSize = 250; // Taille estimée d'une transaction en bytes
         const totalFee = feePerByte * estimatedSize;
-
-        // Total à envoyer (montant + frais)
         const totalToSend = amountToSend + totalFee;
 
-        res.send({ totalFee, totalToSend });
+        // Convertir en USD
+        const totalFeeInUsd = (totalFee / 100000000) * btcToUsd;
+        const totalToSendInUsd = (totalToSend / 100000000) * btcToUsd;
+
+        res.send({ totalFeeInUsd, totalToSendInUsd });
     } catch (error) {
         res.status(500).send({ error: error.message });
     }
